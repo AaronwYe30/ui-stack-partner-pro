@@ -1,12 +1,26 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { bootstrapApplication } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-root',
-  imports: [RouterOutlet],
+  selector: 'hello-app',
+  standalone: true,
+  imports: [HttpClientModule],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrls: ['./app.css'],
 })
-export class App {
-  protected readonly title = signal('ui-stack-partner-pro');
+export class AppComponent implements OnInit {
+  message = '';
+  private http = inject(HttpClient);
+
+  ngOnInit() {
+    this.http.get('http://localhost:8080/hello', { responseType: 'text' })
+      .subscribe({
+        next: (res) => this.message = res,
+        error: (err) => console.error(err)
+      });
+  }
 }
+
+bootstrapApplication(AppComponent);
+
